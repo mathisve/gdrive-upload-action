@@ -5,7 +5,7 @@ inputs:
   filename:
     description: 'the name of the file you want to upload'
     required: true
-  parentId:
+  folderId:
     description: 'the Id of the parent folder you want to upload the file in'
     required: true
   credentials:

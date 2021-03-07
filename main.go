@@ -27,10 +27,10 @@ func main() {
 		githubactions.Fatalf("missing input 'filename'")
 	}
 
-	// get parentId argument from action input
-	parentId := githubactions.GetInput("parentId")
-	if parentId == "" {
-		githubactions.Fatalf("missing input 'parentId'")
+	// get folderId argument from action input
+	folderId := githubactions.GetInput("folderId")
+	if folderId == "" {
+		githubactions.Fatalf("missing input 'folderId'")
 	}
 
 	// get base64 encoded credentials argument from action input
@@ -69,7 +69,7 @@ func main() {
 
 	f := drive.File{
 		Name: file.Name(),
-		Parents: []string{parentId},
+		Parents: []string{folderId},
 	}
 
 	_, err = svc.Files.Create(&f).Media(file).Do()
