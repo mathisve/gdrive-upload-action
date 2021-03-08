@@ -4,15 +4,15 @@
 package main
 
 import (
-	"fmt"
 	"context"
 	"encoding/base64"
+	"fmt"
 	"log"
 	"os"
 
+	"github.com/sethvargo/go-githubactions"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/drive/v3"
-	"github.com/sethvargo/go-githubactions"
 )
 
 const (
@@ -67,15 +67,14 @@ func main() {
 		githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
 	}
 
-	f := drive.File{
-		Name: file.Name(),
+	f := &drive.File{
+		Name:    file.Name(),
 		Parents: []string{folderId},
 	}
 
-	_, err = svc.Files.Create(&f).Media(file).Do()
+	_, err = svc.Files.Create(f).Media(file).Do()
 	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("Creating file: %+v failed with error: %v", f, err))
+		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
 
 }
-
