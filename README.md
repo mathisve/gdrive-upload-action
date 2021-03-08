@@ -1,3 +1,6 @@
+[![build](https://github.com/team-tumbleweed/gdrive-upload-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/team-tumbleweed/gdrive-upload-action/actions)
+[![Go Report Card](https://goreportcard.com/badge/team-tumbleweed/gdrive-upload-action)](https://goreportcard.com/report/team-tumbleweed/gdrive-upload-action)
+
 # gdrive-upload-action
 Github action that uploads files to Google Drive.
 **This only works with a Google Service Account!**

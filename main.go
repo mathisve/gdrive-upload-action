@@ -1,5 +1,5 @@
-// Mathis Van Eetvelde
-// Ghent 2021
+// TTW Software Team
+// 2021-present
 
 package main
 
