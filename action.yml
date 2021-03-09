@@ -1,0 +1,17 @@
+name: 'gdrive-upload-action'
+description: 'Upload a file to Google Drive'
+author: 'Mathis Van Eetvelde'
+inputs:
+  filename:
+    description: 'the name of the file you want to upload'
+    required: true
+  folderId:
+    description: 'the Id of the parent folder you want to upload the file in'
+    required: true
+  credentials:
+    description: 'the service account credentials encoded in base64'
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
