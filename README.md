@@ -5,7 +5,11 @@
 Github action that uploads files to Google Drive.
 **This only works with a Google Service Account!**
 
-To make a GSA go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials). You will need to download the **.json key** and base64 encode it. You will use this string as the `credentials` input. You will also need to **share your drive with the servie account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address.
+To make a GSA go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials). You will need to download the **.json key** and base64 encode it. You will use this string as the `credentials` input. To convert the *json* file to base64 without having to use an online tool (which is insecure), use this command:
+
+`echo -n $(cat credentials.json)| base64 -w 0`
+
+You will also need to **share your drive with the servie account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address.
 
 # Inputs
 
