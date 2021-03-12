@@ -54,7 +54,7 @@ jobs:
           zip -r archive.zip *
 
       - name: Upload to gdrive
-        uses: team-tumbleweed/gdrive-upload-action@master
+        uses: team-tumbleweed/gdrive-upload-action@main
         with:
           filename: "archive.zip"
           folderId: secrets.folderId
