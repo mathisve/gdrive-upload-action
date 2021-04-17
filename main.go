@@ -1,4 +1,5 @@
 // TTW Software Team
+// Mathis Van Eetvelde
 // 2021-present
 
 package main
@@ -9,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/sethvargo/go-githubactions"
 	"golang.org/x/oauth2/google"
@@ -17,26 +19,33 @@ import (
 
 const (
 	scope = "https://www.googleapis.com/auth/drive.file"
+	filenameInput = "filename"
+	nameInput = "name"
+	folderIdInput = "folderId"
+	credentialsInput = "credentials"
 )
 
 func main() {
 
-	// get file argument from action input
-	filename := githubactions.GetInput("filename")
+	// get filename argument from action input
+	filename := githubactions.GetInput(filenameInput)
 	if filename == "" {
-		githubactions.Fatalf("missing input 'filename'")
+		missingInput(filenameInput)
 	}
 
+	// get name argument from action input
+	name := githubactions.GetInput(nameInput)
+
 	// get folderId argument from action input
-	folderId := githubactions.GetInput("folderId")
+	folderId := githubactions.GetInput(folderIdInput)
 	if folderId == "" {
-		githubactions.Fatalf("missing input 'folderId'")
+		missingInput(folderIdInput)
 	}
 
 	// get base64 encoded credentials argument from action input
-	credentials := githubactions.GetInput("credentials")
+	credentials := githubactions.GetInput(credentialsInput)
 	if credentials == "" {
-		githubactions.Fatalf("missing input 'credentials'")
+		missingInput(credentialsInput)
 	}
 	// add base64 encoded credentials argument to mask
 	githubactions.AddMask(credentials)
@@ -46,11 +55,14 @@ func main() {
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
 	}
+
+	creds := strings.TrimSuffix(string(decodedCredentials), "\n")
+
 	// add decoded credentials argument to mask
-	githubactions.AddMask(string(decodedCredentials))
+	githubactions.AddMask(creds)
 
 	// fetching a JWT config with credentials and the right scope
-	conf, err := google.JWTConfigFromJSON(decodedCredentials, scope)
+	conf, err := google.JWTConfigFromJSON([]byte(creds), scope)
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("fetching JWT credentials failed with error: %v", err))
 	}
@@ -67,8 +79,13 @@ func main() {
 		githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
 	}
 
+	// decide name of file in GDrive
+	if name == "" {
+		name = file.Name()
+	}
+
 	f := &drive.File{
-		Name:    file.Name(),
+		Name:    name,
 		Parents: []string{folderId},
 	}
 
@@ -77,4 +94,8 @@ func main() {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
 
+}
+
+func missingInput(inputName string) {
+	githubactions.Fatalf(fmt.Sprintf("missing input '%v'", inputName))
 }

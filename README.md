@@ -19,6 +19,11 @@ Required: **YES**.
 
 The name of the file you want to upload.
 
+## ``name``
+Required: **NO**
+
+The name you want the file to have in Google Drive.
+
 ## ``folderId``
 Required: **YES**. 
 
@@ -58,6 +63,7 @@ jobs:
         uses: team-tumbleweed/gdrive-upload-action@main
         with:
           filename: "archive.zip"
+          name: "documentation.zip"
           folderId: ${{ secrets.folderId }}
           credentials: ${{ secrets.credentials }}
 ```
