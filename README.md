@@ -58,6 +58,6 @@ jobs:
         uses: team-tumbleweed/gdrive-upload-action@main
         with:
           filename: "archive.zip"
-          folderId: secrets.folderId
-          credentials: secrets.credentials
+          folderId: ${{ secrets.folderId }}
+          credentials: ${{ secrets.credentials }}
 ```
