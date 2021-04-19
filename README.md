@@ -22,7 +22,7 @@ The name of the file you want to upload.
 ## ``name``
 Required: **NO**
 
-The name you want the file to have in Google Drive.
+The name you want the file to have in Google Drive. If this input is not provided, it will use the `filename`.
 
 ## ``folderId``
 Required: **YES**. 
