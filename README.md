@@ -60,4 +60,5 @@ jobs:
           filename: "archive.zip"
           folderId: secrets.folderId
           credentials: secrets.credentials
+          overwrite: "true" # optional boolean
 ```
