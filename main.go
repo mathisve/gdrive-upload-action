@@ -1,4 +1,5 @@
 // TTW Software Team
+// Mathis Van Eetvelde
 // 2021-present
 
 // Modified by Aditya Karnam
@@ -14,6 +15,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/sethvargo/go-githubactions"
 	"golang.org/x/oauth2/google"
@@ -21,10 +23,14 @@ import (
 )
 
 const (
-	scope = "https://www.googleapis.com/auth/drive.file"
+	scope            = "https://www.googleapis.com/auth/drive.file"
+	filenameInput    = "filename"
+	nameInput        = "name"
+	folderIdInput    = "folderId"
+	credentialsInput = "credentials"
 )
 
-func uploadToDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File) {
+func uploadToDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File, name string) {
 	file, err := os.Open(filename)
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
@@ -37,7 +43,7 @@ func uploadToDrive(svc *drive.Service, filename string, folderId string, driveFi
 		_, err = svc.Files.Update(driveFile.Id, f).Media(file).Do()
 	} else {
 		f := &drive.File{
-			Name:    file.Name(),
+			Name:    name,
 			Parents: []string{folderId},
 		}
 		_, err = svc.Files.Create(f).Media(file).Do()
@@ -52,10 +58,10 @@ func uploadToDrive(svc *drive.Service, filename string, folderId string, driveFi
 
 func main() {
 
-	// get file argument from action input
-	filename := githubactions.GetInput("filename")
+	// get filename argument from action input
+	filename := githubactions.GetInput(filenameInput)
 	if filename == "" {
-		githubactions.Fatalf("missing input 'filename'")
+		missingInput(filenameInput)
 	}
 
 	// get overwrite flag
@@ -67,16 +73,19 @@ func main() {
 	} else {
 		overwriteFlag, _ = strconv.ParseBool(overwrite)
 	}
+	// get name argument from action input
+	name := githubactions.GetInput(nameInput)
+
 	// get folderId argument from action input
-	folderId := githubactions.GetInput("folderId")
+	folderId := githubactions.GetInput(folderIdInput)
 	if folderId == "" {
-		githubactions.Fatalf("missing input 'folderId'")
+		missingInput(folderIdInput)
 	}
 
 	// get base64 encoded credentials argument from action input
-	credentials := githubactions.GetInput("credentials")
+	credentials := githubactions.GetInput(credentialsInput)
 	if credentials == "" {
-		githubactions.Fatalf("missing input 'credentials'")
+		missingInput(credentialsInput)
 	}
 	// add base64 encoded credentials argument to mask
 	githubactions.AddMask(credentials)
@@ -86,11 +95,14 @@ func main() {
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
 	}
+
+	creds := strings.TrimSuffix(string(decodedCredentials), "\n")
+
 	// add decoded credentials argument to mask
-	githubactions.AddMask(string(decodedCredentials))
+	githubactions.AddMask(creds)
 
 	// fetching a JWT config with credentials and the right scope
-	conf, err := google.JWTConfigFromJSON(decodedCredentials, scope)
+	conf, err := google.JWTConfigFromJSON([]byte(creds), scope)
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("fetching JWT credentials failed with error: %v", err))
 	}
@@ -102,6 +114,10 @@ func main() {
 		log.Println(err)
 	}
 
+	if name == "" {
+		name = file.Name()
+	}
+
 	if overwriteFlag {
 		r, err := svc.Files.List().Do()
 		if err != nil {
@@ -111,16 +127,20 @@ func main() {
 		fmt.Println("Files:")
 		if len(r.Files) == 0 {
 			fmt.Println("No similar files found. Creating a new file")
-			uploadToDrive(svc, filename, folderId, nil)
+			uploadToDrive(svc, filename, folderId, nil, name)
 		} else {
 			for _, i := range r.Files {
 				if filename == i.Name {
 					fmt.Printf("Overwriting file: %s (%s)\n", i.Name, i.Id)
-					uploadToDrive(svc, filename, folderId, i)
+					uploadToDrive(svc, filename, folderId, i, "")
 				}
 			}
 		}
 	} else {
-		uploadToDrive(svc, filename, folderId, nil)
+		uploadToDrive(svc, filename, folderId, nil, name)
 	}
+}
+
+func missingInput(inputName string) {
+	githubactions.Fatalf(fmt.Sprintf("missing input '%v'", inputName))
 }
