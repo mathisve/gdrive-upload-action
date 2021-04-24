@@ -115,6 +115,10 @@ func main() {
 	}
 
 	if name == "" {
+		file, err := os.Open(filename)
+		if err != nil {
+			githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
+		}
 		name = file.Name()
 	}
 
