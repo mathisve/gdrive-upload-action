@@ -28,6 +28,7 @@ const (
 	nameInput        = "name"
 	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
+	overwrite        = "false"
 )
 
 func uploadToDrive(svc *drive.Service, filename string, folderId string, driveFile *drive.File, name string) {
