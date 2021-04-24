@@ -1,6 +1,7 @@
 name: 'google-drive-upload-git-action'
 description: 'Upload files to Google Drive'
 author: 'Aditya Karnam Gururaj Rao'
+icon: archive
 inputs:
   credentials:
     description: 'the service account credentials encoded in base64'
