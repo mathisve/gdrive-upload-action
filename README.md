@@ -9,9 +9,11 @@ To make a GSA go to the [Credentials Dashboard](https://console.cloud.google.com
 
 `echo -n $(cat credentials.json)| base64 -w 0`
 
+
 On mac this the base64 by default opts for -w as 0, you can skip and just use base64 without any params.
 
-You will also need to **share the drive with the servie account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address. Additionally you will need to give the service account acccess to the google drive API. 
+You will also need to **share the drive with the service account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address. Additionally you will need to give the service account acccess to the google drive API. 
+
 Go to `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project={PROJECT_ID}`. Where `{PROJECT_ID}` is the id of your GCP project. Find more info about that [here.](https://support.google.com/googleapi/answer/7014113?hl=en)
 
 # Inputs
