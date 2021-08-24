@@ -1,6 +1,6 @@
-name: 'google-drive-upload-git-action'
-description: 'Upload files to Google Drive'
-author: 'Aditya Karnam Gururaj Rao'
+name: 'gdrive-upload-action'
+description: 'Upload a file to Google Drive'
+author: 'Mathis Van Eetvelde'
 branding:
   icon: 'archive'
   color: 'green'
