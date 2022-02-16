@@ -18,10 +18,10 @@ import (
 )
 
 const (
-	scope = "https://www.googleapis.com/auth/drive.file"
-	filenameInput = "filename"
-	nameInput = "name"
-	folderIdInput = "folderId"
+	scope            = "https://www.googleapis.com/auth/drive.file"
+	filenameInput    = "filename"
+	nameInput        = "name"
+	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
 )
 

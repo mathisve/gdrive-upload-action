@@ -1,10 +1,11 @@
-FROM golang:1.16
+FROM golang:1.17-alpine as BUILD
 
-WORKDIR /src
-COPY . .
+WORKDIR /src/
+COPY . /src/
 
-ENV GO111MODULE=on
+RUN go mod tidy
+RUN CGO_ENABLED=0 go build -o /bin/app .
 
-RUN go build -o /bin/action
-
-ENTRYPOINT ["/bin/action"]
+FROM alpine
+COPY --from=BUILD /bin/app /bin/app
+ENTRYPOINT [ "/bin/app" ]
