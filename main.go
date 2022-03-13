@@ -89,7 +89,7 @@ func main() {
 		Parents: []string{folderId},
 	}
 
-	_, err = svc.Files.Create(f).Media(file).Do()
+	_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
 	if err != nil {
 		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 	}
