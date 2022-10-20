@@ -25,5 +25,7 @@
 
 # End of https://www.gitignore.io/api/go
 
+.DS_Store
 .idea/
 creds.json
+gdrive-upload-action
