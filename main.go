@@ -23,6 +23,7 @@ const (
 	nameInput        = "name"
 	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
+	encodedInput     = "encoded"
 )
 
 func main() {
@@ -43,20 +44,39 @@ func main() {
 	}
 
 	// get base64 encoded credentials argument from action input
-	credentials := githubactions.GetInput(credentialsInput)
-	if credentials == "" {
+	credentialsStr := githubactions.GetInput(credentialsInput)
+	if credentialsStr == "" {
 		missingInput(credentialsInput)
 	}
 	// add base64 encoded credentials argument to mask
-	githubactions.AddMask(credentials)
+	githubactions.AddMask(credentialsStr)
 
-	// decode credentials to []byte
-	decodedCredentials, err := base64.StdEncoding.DecodeString(credentials)
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
+	// get encoded boolean input
+	var encoded bool
+	encodedStr := githubactions.GetInput(encodedInput)
+	if encodedStr == "" || encodedStr == "true" {
+		encoded = true
+	} else if encodedStr == "false" {
+		encoded = false
+	} else {
+		incorrectInput(encodedInput, "encoded needs to be either empty, `false` or `true`.")
 	}
 
-	creds := strings.TrimSuffix(string(decodedCredentials), "\n")
+	// decode if encoded is true
+	var credentials string
+	if encoded {
+		// decode credentials to []byte
+		credentialsByte, err := base64.StdEncoding.DecodeString(credentials)
+		if err != nil {
+			githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
+		}
+
+		credentials = string(credentialsByte)
+	} else {
+		credentials = credentialsStr
+	}
+
+	creds := strings.TrimSuffix(string(credentials), "\n")
 
 	// add decoded credentials argument to mask
 	githubactions.AddMask(creds)
@@ -98,4 +118,12 @@ func main() {
 
 func missingInput(inputName string) {
 	githubactions.Fatalf(fmt.Sprintf("missing input '%v'", inputName))
+}
+
+func incorrectInput(inputName string, reason string) {
+	if reason == "" {
+		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v'", inputName))
+	} else {
+		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v' reason: %v", inputName, reason))
+	}
 }

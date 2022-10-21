@@ -32,7 +32,14 @@ The [ID of the folder](https://ploi.io/documentation/database/where-do-i-get-goo
 ## ``credentials``
 Required: **YES**.
 
-A base64 encoded string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
+A string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
+This string should be base64 encoded. If it is not, set the `encoded` input to `false`.
+
+## ``encoded``
+Required: **NO**
+
+Whether or not the credentials string is base64 encoded. Defaults to `true`.
+
 
 
 # Usage Example
@@ -69,4 +76,5 @@ jobs:
           name: documentation.zip
           folderId: ${{ secrets.folderId }}
           credentials: ${{ secrets.credentials }}
+          encoded: false
 ```
