@@ -12,8 +12,11 @@ inputs:
     description: 'the Id of the parent folder you want to upload the file in'
     required: true
   credentials:
-    description: 'the service account credentials encoded in base64'
+    description: 'the service account credentials. Can be base64 encoded.'
     required: true
+  encoded:
+    description: 'true if the credentials are base64 encoded. false if they are not.'
+    required: false
 
 runs:
   using: docker
