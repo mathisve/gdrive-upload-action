@@ -66,7 +66,7 @@ func main() {
 	var credentials string
 	if encoded {
 		// decode credentials to []byte
-		credentialsByte, err := base64.StdEncoding.DecodeString(credentials)
+		credentialsByte, err := base64.StdEncoding.DecodeString(credentialsStr)
 		if err != nil {
 			githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
 		}
