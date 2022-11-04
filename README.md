@@ -1,5 +1,8 @@
-[![build](https://github.com/team-tumbleweed/gdrive-upload-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/team-tumbleweed/gdrive-upload-action/actions)
-[![Go Report Card](https://goreportcard.com/badge/github.com/team-tumbleweed/gdrive-upload-action)](https://goreportcard.com/report/github.com/team-tumbleweed/gdrive-upload-action)
+[![build](https://github.com/mathisve/gdrive-upload-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/mathisve/gdrive-upload-action/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mathisve/gdrive-upload-action)](https://goreportcard.com/report/github.com/mathisve/gdrive-upload-action)
+
+### This repository was moved from `team-tumbleweed` to `mathisve`
+Because of my absence at team-tumbleweed, we have decided to move the repository from `team-tumbleweed` to `mathisve`. Going forward I will be the maintainer of this repository. While it is advised to move over your workflows to this repository, it should still work when pointed to the old repository. Thank you for your understanding!
 
 # gdrive-upload-action
 Github action that uploads files to Google Drive.
@@ -70,7 +73,7 @@ jobs:
           zip -r archive.zip *
 
       - name: Upload to gdrive
-        uses: team-tumbleweed/gdrive-upload-action@main
+        uses: mathisve/gdrive-upload-action@main
         with:
           filename: archive.zip
           name: documentation.zip

@@ -1,4 +1,3 @@
-// TTW Software Team
 // Mathis Van Eetvelde
 // 2021-present
 
