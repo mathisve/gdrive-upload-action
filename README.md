@@ -26,10 +26,7 @@ To make a Google Service Account, go to the [Credentials Dashboard](https://cons
 3. Set the `encoded` input to `false` in your workflow.
 
 
-You will also need to **share the drive with the service account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address. Go to `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project={PROJECT_ID}`. Where `{PROJECT_ID}` is the id of your GCP project. 
-
-Find more info about your Drives project ID [here.](https://support.google.com/googleapi/answer/7014113?hl=en)
-
+You will also need to **share the drive with the service account.** To do this, just share the folder like you would normally with a friend, except you share it with the Service Account email address. 
 
 Additionally you need to enable the Google Drive API for your GCP project. Do this by going [here](https://console.cloud.google.com/marketplace/product/google/drive.googleapis.com) and pressing `ENABLE`.
 
