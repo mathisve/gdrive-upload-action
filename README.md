@@ -1,19 +1,37 @@
 [![build](https://github.com/mathisve/gdrive-upload-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/mathisve/gdrive-upload-action/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mathisve/gdrive-upload-action)](https://goreportcard.com/report/github.com/mathisve/gdrive-upload-action)
 
-### This repository was moved from `team-tumbleweed` to `mathisve`
-Because of my absence at team-tumbleweed, we have decided to move the repository from `team-tumbleweed` to `mathisve`. Going forward I will be the maintainer of this repository. While it is advised to move over your workflows to this repository, it should still work when pointed to the old repository. Thank you for your understanding!
-
 # gdrive-upload-action
-Github action that uploads files to Google Drive.
-**This only works with a Google Service Account!**
+### Github action that uploads files to Google Drive.
 
-To make a GSA go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials). You will need to download the **.json key** and base64 encode it. You will use this string as the `credentials` input. To convert the *json* file to base64 without having to use an online tool (which is insecure), use this command:
+**Only works with a Google Service Account!**
 
-`cat credentials.json | base64`
+To make a Google Service Account go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials) and press `CREATE CREDENTIALS`, then click on `Service Account`. After creating the SA, go back to the Credentials Dashboard, click on the SA you just created, click on the `KEYS` tabs. Then click on `ADD KEY`, `Create New Key` and select `json`.
 
-You will also need to **share the drive with the service account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address. Additionally you will need to give the service account acccess to the google drive API. 
-Go to `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project={PROJECT_ID}`. Where `{PROJECT_ID}` is the id of your GCP project. Find more info about that [here.](https://support.google.com/googleapi/answer/7014113?hl=en)
+### Encoded credentials
+1. Encode the credentials
+
+    `cat credentials.json | base64`
+
+2. Create a new secret called `credentials` and copy the output of the previous command into this secret.
+
+3. Use this secret as your credentials input in your workflow.
+
+### Plaintext credentials
+
+1. Create a new secret called `credentials` and copy the output of the previous command into this secret.
+
+2. Use this secret as your credentials input in your workflow.
+
+3. Set the `encoded` input to `false` in your workflow.
+
+
+You will also need to **share the drive with the service account.** To do this, just share the folder like you would normally with a friend, except you share it with the service account email address. Go to `https://console.developers.google.com/apis/api/drive.googleapis.com/overview?project={PROJECT_ID}`. Where `{PROJECT_ID}` is the id of your GCP project. 
+
+Find more info about your Drives project ID [here.](https://support.google.com/googleapi/answer/7014113?hl=en)
+
+
+Additionally you need to enable the Google Drive API for your GCP project. Do this by going [here](https://console.cloud.google.com/marketplace/product/google/drive.googleapis.com) and pressing `ENABLE`.
 
 # Inputs
 
