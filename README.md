@@ -6,20 +6,20 @@
 
 **Only works with a Google Service Account!**
 
-To make a Google Service Account go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials) and press `CREATE CREDENTIALS`, then click on `Service Account`. After creating the SA, go back to the Credentials Dashboard, click on the SA you just created, click on the `KEYS` tabs. Then click on `ADD KEY`, `Create New Key` and select `json`.
+To make a Google Service Account, go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials) and press `CREATE CREDENTIALS`, then click on `Service Account`. After creating the SA, go back to the Credentials Dashboard, click on the SA you just created, click on the `KEYS` tabs. Then click on `ADD KEY`, `Create New Key` and select `json`.
 
 ### Encoded credentials
-1. Encode the credentials
+1. Encode the credentials.
 
     `cat credentials.json | base64`
 
-2. Create a new secret called `credentials` and copy the output of the previous command into this secret.
+2. Create a new Github secret called `credentials` and copy the output of the previous command into this secret.
 
 3. Use this secret as your credentials input in your workflow.
 
 ### Plaintext credentials
 
-1. Create a new secret called `credentials` and copy the output of the previous command into this secret.
+1. Create a new Github secret called `credentials` paste the contents of the credentials file you just downloaded in it.
 
 2. Use this secret as your credentials input in your workflow.
 
@@ -32,36 +32,6 @@ Find more info about your Drives project ID [here.](https://support.google.com/g
 
 
 Additionally you need to enable the Google Drive API for your GCP project. Do this by going [here](https://console.cloud.google.com/marketplace/product/google/drive.googleapis.com) and pressing `ENABLE`.
-
-# Inputs
-
-## ``filename``
-Required: **YES**.  
-
-The name of the file you want to upload.
-
-## ``name``
-Required: **NO**
-
-The name you want the file to have in Google Drive. If this input is not provided, it will use the `filename`.
-
-## ``folderId``
-Required: **YES**. 
-
-The [ID of the folder](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) you want to upload to.
-
-## ``credentials``
-Required: **YES**.
-
-A string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
-This string should be base64 encoded. If it is not, set the `encoded` input to `false`.
-
-## ``encoded``
-Required: **NO**
-
-Whether or not the credentials string is base64 encoded. Defaults to `true`.
-
-
 
 # Usage Example
 
@@ -99,3 +69,31 @@ jobs:
           credentials: ${{ secrets.credentials }}
           encoded: false
 ```
+
+# Inputs
+
+## ``filename``
+Required: **YES**
+
+The name of the file you want to upload.
+
+## ``name``
+Required: **NO**
+
+The name you want the file to have in Google Drive. If this input is not provided, it will use the `filename`.
+
+## ``folderId``
+Required: **YES**
+
+The [ID of the folder](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) you want to upload to.
+
+## ``credentials``
+Required: **YES**
+
+A string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
+This string should be base64 encoded. If it is not, set the `encoded` input to `false`.
+
+## ``encoded``
+Required: **NO**
+
+Whether or not the credentials string is base64 encoded. Defaults to `true`.
