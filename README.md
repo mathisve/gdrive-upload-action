@@ -34,6 +34,7 @@ Additionally you need to enable the Google Drive API for your GCP project. Do th
 
 ## Simple Workflow
 In this example we stored the folderId and credentials as action secrets. This is highly recommended as leaking your credentials key will allow anyone to use your service account.
+
 ```yaml
 # .github/workflows/main.yml
 name: Main
@@ -94,3 +95,8 @@ This string should be base64 encoded. If it is not, set the `encoded` input to `
 Required: **NO**
 
 Whether or not the credentials string is base64 encoded. Defaults to `true`.
+
+## ``overwrite``
+Required: **NO**
+
+If you want to overwrite all existing files in the drive folder that match the given `name`, with the current file content. Defaults to `false`

@@ -23,6 +23,7 @@ const (
 	folderIdInput    = "folderId"
 	credentialsInput = "credentials"
 	encodedInput     = "encoded"
+	overwrite        = "overwrite"
 )
 
 func main() {
@@ -103,16 +104,60 @@ func main() {
 		name = file.Name()
 	}
 
-	f := &drive.File{
-		Name:    name,
-		Parents: []string{folderId},
+	// parse overwrite flag
+	overwriteStr := githubactions.GetInput(overwrite)
+	var overwrite bool
+	if overwriteStr == "" || overwriteStr == "true" {
+		overwrite = true
+	} else if overwriteStr == "false" {
+		overwrite = false
 	}
 
-	_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
-	}
+	uploadNewFile := true
+	if overwrite {
+		// Query for all files in google drive directory with name = <name>
+		filenameQuery := fmt.Sprintf("name = '%s' and '%s' in parents", name, folderId)
+		filesQueryCallResult, err := svc.Files.
+			List().
+			IncludeItemsFromAllDrives(true).
+			SupportsAllDrives(true).
+			Q(filenameQuery).
+			Do()
 
+		if err != nil {
+			githubactions.Fatalf(fmt.Sprintf("querying file: %+v failed with error: %v", filenameQuery, err))
+		}
+
+		if len(filesQueryCallResult.Files) != 0 {
+			githubactions.Debugf("Found %d files matching file name and folder", len(filesQueryCallResult.Files))
+			// overwrite each file's content, do not upload a new file
+			uploadNewFile = false
+			for _, driveFile := range filesQueryCallResult.Files {
+				_, err = svc.Files.
+					Update(driveFile.Id, &drive.File{Name: name}).
+					SupportsAllDrives(true).
+					Media(file).
+					Do()
+				githubactions.Debugf(
+					"Updating file %s (in folder %s) with id %s", driveFile.Name, folderId, driveFile.Id,
+				)
+				if err != nil {
+					githubactions.Fatalf(fmt.Sprintf("updating file: %+v failed with error: %v", driveFile, err))
+				}
+			}
+		}
+	}
+	if uploadNewFile {
+		f := &drive.File{
+			Name:    name,
+			Parents: []string{folderId},
+		}
+		githubactions.Debugf("Creating file %s in folder %s", f.Name, folderId)
+		_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
+		if err != nil {
+			githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
+		}
+	}
 }
 
 func missingInput(inputName string) {
