@@ -25,12 +25,77 @@ const (
 	encodedInput     = "encoded"
 )
 
-func main() {
+type Args struct {
+	filename string
+	name     string
+	folderId string
+	creds    string
+}
 
+func run() error {
+	args, err := parseArguments()
+	if err != nil {
+		return err
+	}
+
+	// fetching a JWT config with credentials and the right scope
+	conf, err := google.JWTConfigFromJSON([]byte(args.creds), scope)
+	if err != nil {
+		return fmt.Errorf("fetching JWT credentials failed with error: %v", err)
+	}
+
+	// instantiating a new drive service
+	ctx := context.Background()
+	svc, err := drive.New(conf.Client(ctx))
+	if err != nil {
+		log.Println(err)
+	}
+
+	file, err := os.Open(args.filename)
+	if err != nil {
+		return fmt.Errorf("opening file with filename: %v failed with error: %v", args.filename, err)
+	}
+
+	// decide name of file in GDrive
+	if args.name == "" {
+		args.name = file.Name()
+	}
+
+	f := &drive.File{
+		Name:    args.name,
+		Parents: []string{args.folderId},
+	}
+
+	_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
+	if err != nil {
+		return fmt.Errorf("creating file: %+v failed with error: %v", f, err)
+	}
+	return nil
+}
+
+func main() {
+	if err := run(); err != nil {
+		githubactions.Fatalf(err.Error())
+	}
+}
+
+func missingInput(inputName string) error {
+	return fmt.Errorf("missing input '%v'", inputName)
+}
+
+func incorrectInput(inputName string, reason string) error {
+	if reason == "" {
+		return fmt.Errorf("incorrect input '%v'", inputName)
+	} else {
+		return fmt.Errorf("incorrect input '%v' reason: %v", inputName, reason)
+	}
+}
+
+func parseArguments() (*Args, error) {
 	// get filename argument from action input
 	filename := githubactions.GetInput(filenameInput)
 	if filename == "" {
-		missingInput(filenameInput)
+		return nil, missingInput(filenameInput)
 	}
 
 	// get name argument from action input
@@ -39,13 +104,13 @@ func main() {
 	// get folderId argument from action input
 	folderId := githubactions.GetInput(folderIdInput)
 	if folderId == "" {
-		missingInput(folderIdInput)
+		return nil, missingInput(folderIdInput)
 	}
 
 	// get base64 encoded credentials argument from action input
 	credentialsStr := githubactions.GetInput(credentialsInput)
 	if credentialsStr == "" {
-		missingInput(credentialsInput)
+		return nil, missingInput(credentialsInput)
 	}
 	// add base64 encoded credentials argument to mask
 	githubactions.AddMask(credentialsStr)
@@ -58,7 +123,7 @@ func main() {
 	} else if encodedStr == "false" {
 		encoded = false
 	} else {
-		incorrectInput(encodedInput, "encoded needs to be either empty, `false` or `true`.")
+		return nil, incorrectInput(encodedInput, "encoded needs to be either empty, `false` or `true`.")
 	}
 
 	// decode if encoded is true
@@ -67,9 +132,8 @@ func main() {
 		// decode credentials to []byte
 		credentialsByte, err := base64.StdEncoding.DecodeString(credentialsStr)
 		if err != nil {
-			githubactions.Fatalf(fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
+			return nil, incorrectInput(credentials, fmt.Sprintf("base64 decoding of 'credentials' failed with error: %v", err))
 		}
-
 		credentials = string(credentialsByte)
 	} else {
 		credentials = credentialsStr
@@ -80,49 +144,5 @@ func main() {
 	// add decoded credentials argument to mask
 	githubactions.AddMask(creds)
 
-	// fetching a JWT config with credentials and the right scope
-	conf, err := google.JWTConfigFromJSON([]byte(creds), scope)
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("fetching JWT credentials failed with error: %v", err))
-	}
-
-	// instantiating a new drive service
-	ctx := context.Background()
-	svc, err := drive.New(conf.Client(ctx))
-	if err != nil {
-		log.Println(err)
-	}
-
-	file, err := os.Open(filename)
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("opening file with filename: %v failed with error: %v", filename, err))
-	}
-
-	// decide name of file in GDrive
-	if name == "" {
-		name = file.Name()
-	}
-
-	f := &drive.File{
-		Name:    name,
-		Parents: []string{folderId},
-	}
-
-	_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
-	if err != nil {
-		githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
-	}
-
-}
-
-func missingInput(inputName string) {
-	githubactions.Fatalf(fmt.Sprintf("missing input '%v'", inputName))
-}
-
-func incorrectInput(inputName string, reason string) {
-	if reason == "" {
-		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v'", inputName))
-	} else {
-		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v' reason: %v", inputName, reason))
-	}
+	return &Args{filename: filename, name: name, folderId: folderId, creds: creds}, nil
 }
