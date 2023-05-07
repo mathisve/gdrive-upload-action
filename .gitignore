@@ -29,3 +29,8 @@
 .idea/
 creds.json
 gdrive-upload-action
+
+# Env files
+.envrc
+.env
+/.gitignore

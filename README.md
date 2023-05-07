@@ -94,3 +94,8 @@ This string should be base64 encoded. If it is not, set the `encoded` input to `
 Required: **NO**
 
 Whether or not the credentials string is base64 encoded. Defaults to `true`.
+
+
+## Contributing
+
+For contribution user guide see CONTRIBUTING.md
