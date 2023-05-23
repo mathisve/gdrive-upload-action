@@ -100,6 +100,10 @@ Required: **NO**
 
 Whether or not the credentials string is base64 encoded. Defaults to `true`.
 
+### ``overwrite``
+Required: **NO**
+
+If you want to overwrite all existing files in the drive folder that match the given `name`, with the current file content. Defaults to `false`
 
 ## Contributing
 

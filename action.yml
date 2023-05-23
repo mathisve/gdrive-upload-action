@@ -17,6 +17,9 @@ inputs:
   encoded:
     description: 'true if the credentials are base64 encoded. false if they are not.'
     required: false
+  overwrite:
+    description: 'set to true to update an existing file with the same name, or false to create a new file.'
+    required: false
 
 runs:
   using: docker
