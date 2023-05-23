@@ -1,14 +1,18 @@
 [![build](https://github.com/mathisve/gdrive-upload-action/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/mathisve/gdrive-upload-action/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mathisve/gdrive-upload-action)](https://goreportcard.com/report/github.com/mathisve/gdrive-upload-action)
 
-# gdrive-upload-action
-### Github action that uploads files to Google Drive.
+# Github action that uploads files to Google Drive
+
+## User guide
+
+### Service account required
 
 **Only works with a Google Service Account!**
 
 To make a Google Service Account, go to the [Credentials Dashboard](https://console.cloud.google.com/apis/credentials) and press `CREATE CREDENTIALS`, then click on `Service Account`. After creating the SA, go back to the Credentials Dashboard, click on the SA you just created, click on the `KEYS` tabs. Then click on `ADD KEY`, `Create New Key` and select `json`.
 
 ### Encoded credentials
+
 1. Encode the credentials.
 
     `cat credentials.json | base64`
@@ -30,9 +34,8 @@ You will also need to **share the drive with the service account.** To do this, 
 
 Additionally you need to enable the Google Drive API for your GCP project. Do this by going [here](https://console.cloud.google.com/marketplace/product/google/drive.googleapis.com) and pressing `ENABLE`.
 
-# Usage Example
+## Example: Simple Workflow
 
-## Simple Workflow
 In this example we stored the folderId and credentials as action secrets. This is highly recommended as leaking your credentials key will allow anyone to use your service account.
 
 ```yaml
@@ -68,35 +71,40 @@ jobs:
           encoded: false
 ```
 
-# Inputs
+## Inputs
 
-## ``filename``
+### ``filename``
 Required: **YES**
 
 The name of the file you want to upload.
 
-## ``name``
+### ``name``
+
 Required: **NO**
 
 The name you want the file to have in Google Drive. If this input is not provided, it will use the `filename`.
 
-## ``folderId``
+### ``folderId``
 Required: **YES**
 
 The [ID of the folder](https://ploi.io/documentation/database/where-do-i-get-google-drive-folder-id) you want to upload to.
 
-## ``credentials``
+### ``credentials``
 Required: **YES**
 
 A string with the [GSA credentials](https://stackoverflow.com/questions/46287267/how-can-i-get-the-file-service-account-json-for-google-translate-api/46290808).
 This string should be base64 encoded. If it is not, set the `encoded` input to `false`.
 
-## ``encoded``
+### ``encoded``
 Required: **NO**
 
 Whether or not the credentials string is base64 encoded. Defaults to `true`.
 
-## ``overwrite``
+### ``overwrite``
 Required: **NO**
 
 If you want to overwrite all existing files in the drive folder that match the given `name`, with the current file content. Defaults to `false`
+
+## Contributing
+
+For contribution user guide see CONTRIBUTING.md
