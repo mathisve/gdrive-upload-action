@@ -153,10 +153,11 @@ func main() {
 			Parents: []string{folderId},
 		}
 		githubactions.Debugf("Creating file %s in folder %s", f.Name, folderId)
-		_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
+		uploadedFile, err := svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
 		if err != nil {
 			githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 		}
+		githubactions.SetOutput("share_links", uploadedFile.WebContentLink)
 	}
 }
 
