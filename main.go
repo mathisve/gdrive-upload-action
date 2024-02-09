@@ -157,7 +157,11 @@ func main() {
 		if err != nil {
 			githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 		}
-		githubactions.SetOutput("share_links", uploadedFile.WebContentLink)
+		fileMeta, err := svc.Files.Get(uploadedFile.Id).Fields("webContentLink").Do()
+		if err != nil {
+			log.Fatalf("Unable to retrieve file metadata: %v", err)
+		}
+		githubactions.SetOutput("download-links", fileMeta.WebContentLink)
 	}
 }
 
