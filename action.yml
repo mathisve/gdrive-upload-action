@@ -21,7 +21,7 @@ inputs:
     description: 'set to true to update an existing file with the same name, or false to create a new file.'
     required: false
 outputs:
-  share_links:
+  download-link:
     description: "Link to download the uploaded file."
 
 runs:

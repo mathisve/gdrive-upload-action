@@ -161,7 +161,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Unable to retrieve file metadata: %v", err)
 		}
-		githubactions.SetOutput("download-links", fileMeta.WebContentLink)
+		githubactions.SetOutput("download-link", fileMeta.WebContentLink)
 	}
 }
 
