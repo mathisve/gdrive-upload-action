@@ -161,7 +161,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("Unable to retrieve file metadata: %v", err)
 		}
-		githubactions.SetOutput("download-link", fileMeta.WebContentLink)
+		setOutputEnv("download-link", fileMeta.WebContentLink)
 	}
 }
 
@@ -175,4 +175,29 @@ func incorrectInput(inputName string, reason string) {
 	} else {
 		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v' reason: %v", inputName, reason))
 	}
+}
+
+func setOutputEnv(outputName string, outputValue string) {
+	githubOutput := os.Getenv("GITHUB_OUTPUT")
+	if githubOutput == "" {
+		githubactions.Fatalf("GITHUB_OUTPUT environment variable is not set")
+		return
+	}
+
+	file, err := os.OpenFile(githubOutput, os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		githubactions.Fatalf("Error opening file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	content := fmt.Sprintf("%s=%s", outputName, outputValue)
+	_, err = file.WriteString(content)
+	if err != nil {
+		githubactions.Fatalf("Error writing to file: %v\n", err)
+		return
+	}
+
+	fmt.Println("Content written to file successfully")
+
 }
