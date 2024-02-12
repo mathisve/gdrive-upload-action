@@ -153,10 +153,15 @@ func main() {
 			Parents: []string{folderId},
 		}
 		githubactions.Debugf("Creating file %s in folder %s", f.Name, folderId)
-		_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
+		uploadedFile, err := svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
 		if err != nil {
 			githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 		}
+		fileMeta, err := svc.Files.Get(uploadedFile.Id).Fields("webContentLink").Do()
+		if err != nil {
+			log.Fatalf("Unable to retrieve file metadata: %v", err)
+		}
+		githubactions.SetOutput("download-link", fileMeta.WebContentLink)
 	}
 }
 
