@@ -105,6 +105,12 @@ Required: **NO**
 
 If you want to overwrite all existing files in the drive folder that match the given `name`, with the current file content. Defaults to `false`
 
+## Output
+
+### ``download-link``
+
+Link to download the uploaded file from gdrive.
+
 ## Contributing
 
 For contribution user guide see CONTRIBUTING.md
