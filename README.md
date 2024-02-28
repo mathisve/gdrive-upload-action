@@ -51,6 +51,8 @@ on:
 jobs:
   gdrive-upload:
     runs-on: ubuntu-latest
+    outputs:
+      DOWNLOAD_LINK: ${{ steps.upload.outputs.download-link }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -62,6 +64,7 @@ jobs:
           zip -r archive.zip *
 
       - name: Upload to gdrive
+        id: upload
         uses: mathisve/gdrive-upload-action@main
         with:
           filename: archive.zip
@@ -69,6 +72,14 @@ jobs:
           folderId: ${{ secrets.folderId }}
           credentials: ${{ secrets.credentials }}
           encoded: false
+  
+  printing-download-link:
+    runs-on: ubuntu-latest
+    needs: gdrive-upload
+    steps:
+      - name: Printing download link to the console
+        run: |
+          echo "The download link for the uploaded file is: ${{ needs.gdrive-upload.outputs.DOWNLOAD_LINK }}
 ```
 
 ## Inputs
