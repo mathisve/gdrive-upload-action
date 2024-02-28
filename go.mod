@@ -1,6 +1,6 @@
 module gdrive-upload-action
 
-go 1.18
+go 1.20
 
 require (
 	github.com/sethvargo/go-githubactions v0.3.0
