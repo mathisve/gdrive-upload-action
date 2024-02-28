@@ -153,10 +153,15 @@ func main() {
 			Parents: []string{folderId},
 		}
 		githubactions.Debugf("Creating file %s in folder %s", f.Name, folderId)
-		_, err = svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
+		uploadedFile, err := svc.Files.Create(f).Media(file).SupportsAllDrives(true).Do()
 		if err != nil {
 			githubactions.Fatalf(fmt.Sprintf("creating file: %+v failed with error: %v", f, err))
 		}
+		fileMeta, err := svc.Files.Get(uploadedFile.Id).Fields("webContentLink").Do()
+		if err != nil {
+			log.Fatalf("Unable to retrieve file metadata: %v", err)
+		}
+		setOutputEnv("download-link", fileMeta.WebContentLink)
 	}
 }
 
@@ -170,4 +175,29 @@ func incorrectInput(inputName string, reason string) {
 	} else {
 		githubactions.Fatalf(fmt.Sprintf("incorrect input '%v' reason: %v", inputName, reason))
 	}
+}
+
+func setOutputEnv(outputName string, outputValue string) {
+	githubOutput := os.Getenv("GITHUB_OUTPUT")
+	if githubOutput == "" {
+		githubactions.Fatalf("GITHUB_OUTPUT environment variable is not set")
+		return
+	}
+
+	file, err := os.OpenFile(githubOutput, os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		githubactions.Fatalf("Error opening file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	content := fmt.Sprintf("%s=%s", outputName, outputValue)
+	_, err = file.WriteString(content)
+	if err != nil {
+		githubactions.Fatalf("Error writing to file: %v\n", err)
+		return
+	}
+
+	fmt.Println("Content written to file successfully")
+
 }
